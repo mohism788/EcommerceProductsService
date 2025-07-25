@@ -11,8 +11,8 @@ using ProductCatalogService.DataAccess;
 namespace ProductCatalogService.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250725091342_Init")]
-    partial class Init
+    [Migration("20250725133232_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

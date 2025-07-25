@@ -72,11 +72,8 @@ namespace ProductCatalogService.Services
         public async Task<ProductWithPriceDto> GetProductByIdAsync(int productId)
         {
             // Get product from DB (has Id & Name)
-            var product = await _applicationDbContext.Products
-                           .FirstOrDefaultAsync(p => p.ProductId == productId);
-
-            if (product == null)
-                throw new Exception($"Product ID {productId} not found");
+            var product = await _applicationDbContext.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
+            
 
             // Call price API to get price
             var priceDto = await _priceApiClient.GetPriceByProductIdAsync(productId);
@@ -84,7 +81,7 @@ namespace ProductCatalogService.Services
             // Merge and return
             return new ProductWithPriceDto
             {
-                ProductId = product.ProductId,
+                ProductId = priceDto.ProductId,
                 Name = product.Name,
                 ProductPrice = priceDto.ProductPrice
             };

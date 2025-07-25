@@ -15,10 +15,8 @@ builder.Services.AddScoped<IProductServices, ProductServices>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddHttpClient<IPriceApiClient, PriceApiClient>(client =>
-{
-    client.BaseAddress = new Uri("https://localhost:7184/"); // change to your PriceAPI URL
-});
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<IPriceApiClient, PriceApiClient>();
 
 var app = builder.Build();
 
