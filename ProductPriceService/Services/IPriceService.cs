@@ -7,5 +7,9 @@
  
         Task CreatePriceAsync(int productId, int price);
 
+
+        Task UpdatePriceAsync(int productId, int newPrice);
+
+        Task DeletePriceAsync(int productId);
     }
 }

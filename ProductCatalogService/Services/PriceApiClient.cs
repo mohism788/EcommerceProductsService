@@ -36,6 +36,30 @@ namespace ProductCatalogService.Services
             return response.IsSuccessStatusCode;
         }
 
+        public async Task<bool> DeletePriceByProductIdAsync(int productId)
+        {
+            var client = _httpClient.CreateClient();
+            var payload = productId;
+            var content = new StringContent(
+                JsonSerializer.Serialize(payload),
+                Encoding.UTF8,
+                "application/json"
+            );
+            var response = await client.PostAsync($"https://localhost:7151/api/Prices/DeletePrice{productId}", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Failed to delete price for product ID {productId}. Status code: {response.StatusCode}.");
+            }
+            var responseString = await response.Content.ReadAsStringAsync();
+            if (string.IsNullOrEmpty(responseString))
+            {
+                throw new Exception($"Price for product ID {productId} not found or could not be deleted.");
+            }
+            return true;
+
+        }
+
         public async Task<ProductIdPriceDto> GetPriceByProductIdAsync(int productId)
         {
             /*var client = _httpClient.CreateClient();
@@ -126,6 +150,34 @@ namespace ProductCatalogService.Services
             return result;
         }
 
+        public async Task<ProductIdPriceDto> UpdatePriceByProductIdAsync(int productId, int newPrice)
+        {
+            var client = _httpClient.CreateClient();
+            var payload = new
+            {
+                ProductId = productId,
+                ProductPrice = newPrice
+            };
+            var content = new StringContent(
+                JsonSerializer.Serialize(payload),
+                Encoding.UTF8,
+                "application/json"
+            );
+            var response = await client.PutAsync($"https://localhost:7151/api/Prices/UpdateProductPrice{productId}", content);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Failed to update price for product ID {productId}. Status code: {response.StatusCode}");
+            }
+            var responseString = await response.Content.ReadAsStringAsync();
+            var priceDto = JsonSerializer.Deserialize<ProductIdPriceDto>(
+                responseString,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
+            if (priceDto == null)
+            {
+                throw new Exception($"Price for product ID {productId} not found.");
+            }
+            return await Task.FromResult(priceDto);
+        }
     }
 }

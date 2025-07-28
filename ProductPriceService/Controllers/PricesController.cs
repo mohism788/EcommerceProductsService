@@ -84,5 +84,48 @@ namespace ProductPriceService.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        //create an update api to be used from the ProductCatalog 
+        [HttpPut]
+        //Route with id
+        [Route("UpdateProductPrice{productId:int}")]
+
+
+        public async Task<IActionResult> UpdatePrice(UpdatePriceDto dto)
+        {
+            try
+            {
+                await _priceService.UpdatePriceAsync(dto.ProductId, dto.ProductPrice);
+                //return Message that the price has been updated
+                return Ok(dto);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("DeletePrice{productId:int}")]
+        public async Task<IActionResult> DeletePrice(int productId)
+        {
+            try
+            {
+                await _priceService.DeletePriceAsync(productId);
+                return Ok($"Product {productId} price has been deleted successfully!");
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }

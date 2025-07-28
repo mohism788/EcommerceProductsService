@@ -77,21 +77,66 @@ namespace ProductCatalogService.Controllers
 
         // DELETE: api/Products/5
         [HttpDelete]
-        [Route("{id:int}")]
-        public async Task<IActionResult> DeleteProduct([FromRoute] int id)
+        [Route("{ProductId:int}")]
+        public async Task<IActionResult> DeleteProduct([FromRoute] int ProductId)
         {
             try
             {
-                var deletedProduct = await _productServices.DeleteProductAsync(id);
+                var deletedProduct = await _productServices.DeleteProductAsync(ProductId);
                 if (deletedProduct == null)
                 {
-                    return NotFound($"Product with ID {id} not found.");
+                    return NotFound($"Product with ID {ProductId} not found.");
                 }
                 var productDto = ProductMapper.ToDto(deletedProduct);
                 return Ok(deletedProduct);
             }
             catch (Exception ex)
             {
+                return NotFound(ex.Message);
+            }
+        }
+
+        // PUT: api/Products/5
+        [HttpPut]
+        //[Route("{id:int}")]
+        public async Task<IActionResult> UpdateProduct([FromBody] ProductIdPriceDto product)
+        {
+            try
+            {
+                var updatedProduct = await _productServices.UpdateProductPriceAsync(product.ProductId, product.ProductPrice);
+                if (updatedProduct == null)
+                {
+                    return NotFound($"Product with ID {product.ProductId} not found.");
+                }
+                //var productDto = ProductMapper.ToDto(updatedProduct);
+                return Ok(updatedProduct);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpPut]
+        //write a route with id
+        [Route("UpdateName{ProductId:int}")]
+
+        public async Task<IActionResult> UpdateProductName([FromRoute] int ProductId, [FromBody] UpdateProductNameDto newName)
+        {
+            try
+            {
+                var updatedName = await _productServices.UpdateProductNameAsync(ProductId, newName);
+
+                if (updatedName == null)
+                {
+                    return NotFound($"Product with ID {ProductId} not found.");
+                }
+
+                return Ok(updatedName);
+            }
+            catch (Exception ex)
+            {
+
                 return NotFound(ex.Message);
             }
         }

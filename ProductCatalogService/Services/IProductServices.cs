@@ -13,5 +13,13 @@ namespace ProductCatalogService.Services
         //Get product by id
         Task<ProductWithPriceDto> GetProductByIdAsync(int productId);
         Task<Product?> DeleteProductAsync(int id);
+
+        //Update product price by id
+        Task<ProductWithPriceDto?> UpdateProductPriceAsync(int productId, int newPrice);
+
+
+        Task<ProductDto?> UpdateProductNameAsync(int productId, UpdateProductNameDto productName);
+
+
     }
 }

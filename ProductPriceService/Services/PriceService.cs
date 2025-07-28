@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using ProductPriceService.DataAccess;
 using ProductPriceService.Models;
 
@@ -43,6 +44,26 @@ namespace ProductPriceService.Services
 
         }
 
+        public async Task DeletePriceAsync(int productId)
+        {
+            var exist = await _applicationDbContext.Prices.FirstOrDefaultAsync(p => p.ProductId == productId);
+            if (exist == null)
+            {
+                throw new KeyNotFoundException($"Price for product with ID {productId} not found.");
+            }
+            // Log deleting price for product with {id}
+            _logger.LogInformation($"Deleting price for product with ID {productId}");
+            _applicationDbContext.Prices.Remove(exist);
+            await _applicationDbContext.SaveChangesAsync();
+            // Log deleted price for product with {id}
+            _logger.LogInformation($"Successfully Deleted price for product with ID {productId}");
+
+
+            
+
+
+        }
+
         public async Task<int> GetPriceByProductIdAsync(int productId)
         {
             //if productId is less than 1 OR not found in Prices DB, throw an exception
@@ -74,6 +95,20 @@ namespace ProductPriceService.Services
                 
             
             return price;
+        }
+
+        public async Task UpdatePriceAsync(int productId, int newPrice)
+        {
+            var exist = await _applicationDbContext.Prices.FirstOrDefaultAsync(p => p.ProductId == productId);
+            if (exist == null)
+            {
+                throw new KeyNotFoundException($"Price for product with ID {productId} not found.");
+            }
+            // Log updating price for product with {id}
+            _logger.LogInformation($"Updating price for product with ID {productId} to {newPrice}");
+            exist.ProductPrice = newPrice;
+            _applicationDbContext.Prices.Update(exist);
+            await _applicationDbContext.SaveChangesAsync();
         }
     }
 }
